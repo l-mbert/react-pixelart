@@ -16,19 +16,13 @@ yarn add react-pixelart
 
 Then use it in your app:
 
-```
+```js
 import React from 'react';
 import Pixelart from 'react-pixelart';
 
 class App extends React.Component {
   render() {
-    return (
-      <Pixelart
-        pixelSize={16}
-        columns={32}
-        rows={32}
-      />
-    )
+    return <Pixelart pixelSize={16} columns={32} rows={32} />;
   }
 }
 ```
