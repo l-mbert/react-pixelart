@@ -7,7 +7,7 @@ class ReactPixelart extends React.Component {
   constructor(props) {
     super(props);
 
-    this.layers = [];
+    this.layerRefs = [];
 
     this.pixelSize = this.props.pixelSize;
     this.mouse = {};
@@ -26,8 +26,10 @@ class ReactPixelart extends React.Component {
 
   _recordMouseMovement = (event) => {
     this.mouse = this._getMousePosition(event);
-    this.layers.forEach((layer) => {
-      layer.updateMouse(this.mouse);
+    this.layerRefs.forEach((layer) => {
+      if (layer && layer.updateMouse) {
+        layer.updateMouse(this.mouse);
+      }
     });
   };
 
@@ -76,7 +78,7 @@ class ReactPixelart extends React.Component {
         <div className='ReactPixelart-Layers'>
           <Layer
             ref={(node) => {
-              this.layers.push(node);
+              this.layerRefs.push(node);
             }}
             pixelSize={this.props.pixelSize}
             columns={this.props.columns}

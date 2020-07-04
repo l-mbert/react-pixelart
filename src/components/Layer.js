@@ -27,7 +27,6 @@ class Layer extends React.Component {
     this.canvas.addEventListener('contextmenu', this._clearPixel);
 
     this._drawGrid();
-    this._draw();
   }
 
   updateMouse = (mouse) => {
@@ -50,21 +49,6 @@ class Layer extends React.Component {
     context.fill();
   };
 
-  _drawImage = () => {
-    this.matrix.forEach((row) => {
-      row.forEach((col) => {
-        if (col === null) return;
-        this.context.fillStyle = col.color || this.pixelColor;
-        this.context.fillRect(
-          col.x * this.pixelSize,
-          col.y * this.pixelSize,
-          this.pixelSize,
-          this.pixelSize,
-        );
-      });
-    });
-  };
-
   _startDrawing = (event) => {
     if (event.button === 0) {
       const self = this;
@@ -74,8 +58,16 @@ class Layer extends React.Component {
         if (pos.x >= 0 && pos.y >= 0) {
           pos['color'] = self.pixelColor;
           self.matrix[pos.x][pos.y] = pos;
+
+          self.context.fillStyle = pos.color || self.pixelColor;
+          self.context.fillRect(
+            pos.x * self.pixelSize,
+            pos.y * self.pixelSize,
+            self.pixelSize,
+            self.pixelSize,
+          );
         }
-      }, 10);
+      }, 1);
     }
   };
 
@@ -87,7 +79,7 @@ class Layer extends React.Component {
     event.preventDefault();
 
     this.matrix[this.mouse.x][this.mouse.y] = null;
-    this.drawContext.clearRect(
+    this.context.clearRect(
       this.mouse.x * this.pixelSize,
       this.mouse.y * this.pixelSize,
       this.pixelSize,
@@ -95,12 +87,6 @@ class Layer extends React.Component {
     );
 
     return false;
-  };
-
-  _draw = () => {
-    this._drawImage();
-
-    window.requestAnimationFrame(this._draw);
   };
 
   render() {

@@ -9,7 +9,7 @@ export default class Demo extends Component {
     return (
       <div>
         <h1>react-pixelart Demo</h1>
-        <ReactPixelart pixelSize={16} columns={32} rows={32} />
+        <ReactPixelart pixelSize={8} columns={64} rows={64} />
       </div>
     );
   }
