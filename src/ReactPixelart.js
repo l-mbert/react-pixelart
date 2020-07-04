@@ -32,15 +32,16 @@ class ReactPixelart extends React.Component {
   };
 
   _getMousePosition = (event) => {
-    let rect = this.mouseCanvas.getBoundingClientRect();
+    if (this.mouseCanvas) {
+      let rect = this.mouseCanvas.getBoundingClientRect();
 
-    let w = this.pixelSize;
-    let h = this.pixelSize;
+      let ps = this.pixelSize;
 
-    return {
-      x: Math.round((event.clientX - rect.left - w / 2) / w),
-      y: Math.round((event.clientY - rect.top - h / 2) / h),
-    };
+      return {
+        x: Math.round((event.clientX - rect.left - ps / 2) / ps),
+        y: Math.round((event.clientY - rect.top - ps / 2) / ps),
+      };
+    }
   };
 
   _drawMouse = () => {
