@@ -15,6 +15,7 @@ class ReactPixelart extends React.Component {
         {
           id: 1,
           name: 'Layer 1',
+          preview: '',
           matrix: [[]],
           locked: false,
           hidden: false,

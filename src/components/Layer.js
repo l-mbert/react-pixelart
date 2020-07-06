@@ -81,6 +81,7 @@ class Layer extends React.Component {
 
   _stopDrawing = (event) => {
     clearInterval(this.interval);
+    this.layer.preview = this.canvas.toDataURL('image/jpeg');
     this.updateLayer(this.layer);
   };
 
@@ -88,6 +89,7 @@ class Layer extends React.Component {
     event.preventDefault();
 
     this.layer.matrix[this.mouse.x][this.mouse.y] = null;
+    this.layer.preview = this.canvas.toDataURL('image/jpeg');
     this.updateLayer(this.layer);
 
     this.matrix[this.mouse.x][this.mouse.y] = null;

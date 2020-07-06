@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 
 import './demo.css';
 import ReactPixelart from '../../src';
-import LayerControl from '../../src/components/LayerControl';
+import { LayerControl } from '../../src';
 export default class Demo extends Component {
   render() {
     return (

@@ -22,6 +22,8 @@ class LayerControl extends React.Component {
     this.layers.push({
       id: 2,
       name: 'Layer 2',
+      preview:
+        'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
       matrix: [[]],
       locked: false,
       hidden: false,
@@ -59,7 +61,13 @@ class LayerControl extends React.Component {
                         Hide
                       </button>
                       <div className='ReactPixelart-LayerControl-layersItem-preview'>
-                        Preview...
+                        <img
+                          src={layer.preview}
+                          style={{
+                            width: '100px',
+                            height: '100px',
+                          }}
+                        />
                       </div>
                       <div className='ReactPixelart-LayerControl-layersItem-right'>
                         <div className='ReactPixelart-LayerControl-layersItem-rightName'>
