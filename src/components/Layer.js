@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import LayerContext from '../helpers/LayerContext';
+
 class Layer extends React.Component {
   constructor(props) {
     super(props);
@@ -8,6 +10,8 @@ class Layer extends React.Component {
     this.pixelSize = this.props.pixelSize;
     this.pixelColor = 'blue';
     this.mouse = {};
+
+    this.updateLayer = () => {};
   }
 
   componentDidMount() {
@@ -31,6 +35,8 @@ class Layer extends React.Component {
   }
 
   componentDidUpdate() {
+    this.context = this.canvas.getContext('2d');
+
     this.matrix.forEach((row) => {
       row.forEach((col) => {
         if (col === null) return;
@@ -59,6 +65,8 @@ class Layer extends React.Component {
           pos['color'] = self.pixelColor;
           self.matrix[pos.x][pos.y] = pos;
 
+          self.layer.matrix[pos.x][pos.y] = pos;
+
           self.context.fillStyle = pos.color || self.pixelColor;
           self.context.fillRect(
             pos.x * self.pixelSize,
@@ -73,10 +81,14 @@ class Layer extends React.Component {
 
   _stopDrawing = (event) => {
     clearInterval(this.interval);
+    this.updateLayer(this.layer);
   };
 
   _clearPixel = (event) => {
     event.preventDefault();
+
+    this.layer.matrix[this.mouse.x][this.mouse.y] = null;
+    this.updateLayer(this.layer);
 
     this.matrix[this.mouse.x][this.mouse.y] = null;
     this.context.clearRect(
@@ -91,18 +103,28 @@ class Layer extends React.Component {
 
   render() {
     return (
-      <canvas
-        className='ReactPixelart-Layer'
-        ref={(node) => {
-          this.canvas = node;
+      <LayerContext.Consumer>
+        {({ updateLayer }) => {
+          this.updateLayer = updateLayer;
+
+          return (
+            <canvas
+              className='ReactPixelart-Layer'
+              ref={(node) => {
+                this.canvas = node;
+              }}
+              style={{
+                position: 'absolute',
+              }}
+            />
+          );
         }}
-        style={{
-          position: 'absolute',
-        }}
-      />
+      </LayerContext.Consumer>
     );
   }
 }
+
+Layer.contextType = LayerContext;
 
 Layer.propTypes = {
   layer: PropTypes.shape({
@@ -112,7 +134,6 @@ Layer.propTypes = {
     locked: PropTypes.bool.isRequired,
     hidden: PropTypes.bool.isRequired,
   }).isRequired,
-  updateLayer: PropTypes.func.isRequired,
   pixelSize: PropTypes.number.isRequired,
   columns: PropTypes.number.isRequired,
   rows: PropTypes.number.isRequired,
