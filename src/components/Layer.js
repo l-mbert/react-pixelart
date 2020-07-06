@@ -16,6 +16,9 @@ class Layer extends React.Component {
       () => new Array(this.props.columns),
     );
 
+    this.layer = this.props.layer;
+    this.layer.matrix = this.matrix;
+
     this.context = this.canvas.getContext('2d');
 
     this.canvas.width = this.props.rows * this.pixelSize;
@@ -25,28 +28,25 @@ class Layer extends React.Component {
     this.canvas.addEventListener('mouseup', this._stopDrawing);
     this.canvas.addEventListener('mouseleave', this._stopDrawing);
     this.canvas.addEventListener('contextmenu', this._clearPixel);
+  }
 
-    this._drawGrid();
+  componentDidUpdate() {
+    this.matrix.forEach((row) => {
+      row.forEach((col) => {
+        if (col === null) return;
+        this.context.fillStyle = col.color || this.pixelColor;
+        this.context.fillRect(
+          col.x * this.pixelSize,
+          col.y * this.pixelSize,
+          this.pixelSize,
+          this.pixelSize,
+        );
+      });
+    });
   }
 
   updateMouse = (mouse) => {
     this.mouse = mouse;
-  };
-
-  _drawGrid = () => {
-    const context = this.context;
-
-    context.fillStyle = 'rgba(222, 222, 222, 1)';
-
-    let ps = this.pixelSize;
-
-    for (var i = 0; i < this.props.rows; ++i) {
-      for (var j = 0, col = this.props.columns / 2; j < col; ++j) {
-        context.rect(2 * j * ps + (i % 2 ? 0 : ps), i * ps, ps, ps);
-      }
-    }
-
-    context.fill();
   };
 
   _startDrawing = (event) => {
@@ -96,12 +96,23 @@ class Layer extends React.Component {
         ref={(node) => {
           this.canvas = node;
         }}
+        style={{
+          position: 'absolute',
+        }}
       />
     );
   }
 }
 
 Layer.propTypes = {
+  layer: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    matrix: PropTypes.arrayOf(PropTypes.array).isRequired,
+    locked: PropTypes.bool.isRequired,
+    hidden: PropTypes.bool.isRequired,
+  }).isRequired,
+  updateLayer: PropTypes.func.isRequired,
   pixelSize: PropTypes.number.isRequired,
   columns: PropTypes.number.isRequired,
   rows: PropTypes.number.isRequired,

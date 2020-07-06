@@ -1,16 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Grid from './components/Grid';
 import Layer from './components/Layer';
 
 class ReactPixelart extends React.Component {
   constructor(props) {
     super(props);
 
+    this.layers = [
+      {
+        id: 1,
+        name: 'Layer 1',
+        matrix: [[]],
+        locked: false,
+        hidden: false,
+      },
+    ];
+
     this.layerRefs = [];
 
     this.pixelSize = this.props.pixelSize;
-    this.mouse = {};
+    this.mouse = {
+      x: 0,
+      y: 0,
+    };
+
+    console.log(props.children);
   }
 
   componentDidMount() {
@@ -20,12 +36,12 @@ class ReactPixelart extends React.Component {
     this.mouseCanvas.height = this.props.columns * this.pixelSize;
 
     document.addEventListener('mousemove', this._recordMouseMovement);
-
-    this._draw();
   }
 
   _recordMouseMovement = (event) => {
     this.mouse = this._getMousePosition(event);
+
+    this._drawMouse();
     this.layerRefs.forEach((layer) => {
       if (layer && layer.updateMouse) {
         layer.updateMouse(this.mouse);
@@ -66,36 +82,64 @@ class ReactPixelart extends React.Component {
     context.globalAlpha = 1;
   };
 
-  _draw = () => {
-    this._drawMouse();
-
-    window.requestAnimationFrame(this._draw);
-  };
-
   render() {
+    const clonedChildren = [];
+    if (this.props.children) {
+      let toClone = [];
+      if (!Array.isArray(this.props.children)) {
+        toClone.push(this.props.children);
+      } else {
+        toClone = [...this.props.children];
+      }
+      toClone.forEach((child, index) => {
+        const cloned = React.cloneElement(child, {
+          ...child.props,
+          key: index,
+          layers: this.layers,
+        });
+        clonedChildren.push(cloned);
+      });
+    }
+
     return (
       <div className='ReactPixelart'>
-        <div className='ReactPixelart-Layers'>
-          <Layer
-            ref={(node) => {
-              this.layerRefs.push(node);
+        <div className='ReactPixelart-Content'>
+          <div
+            className='ReactPixelart-Layers'
+            style={{
+              position: 'relative',
             }}
-            pixelSize={this.props.pixelSize}
-            columns={this.props.columns}
-            rows={this.props.columns}
+          >
+            <Grid
+              pixelSize={this.props.pixelSize}
+              columns={this.props.columns}
+              rows={this.props.columns}
+            />
+            {this.layers.map((layer) => (
+              <Layer
+                key={layer.id}
+                ref={(node) => {
+                  this.layerRefs.push(node);
+                }}
+                layer={layer}
+                pixelSize={this.props.pixelSize}
+                columns={this.props.columns}
+                rows={this.props.columns}
+              />
+            ))}
+          </div>
+          {/* Inline-Styles because nwb doesn't copy CSS Files when Building. It's only two point's which are needed. */}
+          <canvas
+            ref={(node) => {
+              this.mouseCanvas = node;
+            }}
+            style={{
+              zIndex: 2,
+              pointerEvents: 'none',
+            }}
           />
         </div>
-        {/* Inline-Styles because nwb doesn't copy CSS Files when Building. It's only two point's which are needed. */}
-        <canvas
-          ref={(node) => {
-            this.mouseCanvas = node;
-          }}
-          style={{
-            zIndex: 2,
-            pointerEvents: 'none',
-            transform: 'translateY(-100%)',
-          }}
-        />
+        <div className='ReactPixelart-Controls'>{clonedChildren}</div>
       </div>
     );
   }
