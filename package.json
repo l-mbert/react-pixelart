@@ -1,5 +1,5 @@
 {
-  "name": "react-pixelart",
+  "name": "@l-mbert/react-pixelart",
   "version": "0.0.5",
   "description": "A simple Pixeleditor built with React.",
   "main": "lib/index.js",
