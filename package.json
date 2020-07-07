@@ -1,7 +1,7 @@
 {
   "name": "react-pixelart",
-  "version": "1.0.0",
-  "description": "react-pixelart React component",
+  "version": "0.0.5",
+  "description": "A simple Pixeleditor built with React.",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -29,11 +29,14 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
-  "author": "",
+  "author": "Lambert <lambertweller@live.de",
   "homepage": "",
-  "license": "MIT",
-  "repository": "",
+  "license": "GPL-3.0",
+  "repository": "git://github.com/l-mbert/react-pixelart.git",
   "keywords": [
-    "react-component"
+    "react-pixelart",
+    "pixel-art-editor",
+    "pixel-art",
+    "pixelart"
   ]
 }
