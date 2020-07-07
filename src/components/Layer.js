@@ -106,16 +106,22 @@ class Layer extends React.Component {
   render() {
     return (
       <LayerContext.Consumer>
-        {({ updateLayer }) => {
+        {({ layers, updateLayer }) => {
+          this.layer = layers.filter((l) => {
+            if (l.id === this.props.layer.id) return true;
+            return false;
+          })[0];
+
           this.updateLayer = updateLayer;
 
           return (
             <canvas
-              className='ReactPixelart-Layer'
+              className={'ReactPixelart-Layer'}
               ref={(node) => {
                 this.canvas = node;
               }}
               style={{
+                opacity: this.layer.hidden ? 0 : 1,
                 position: 'absolute',
               }}
             />
@@ -132,6 +138,7 @@ Layer.propTypes = {
   layer: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    preview: PropTypes.string.isRequired,
     matrix: PropTypes.arrayOf(PropTypes.array).isRequired,
     locked: PropTypes.bool.isRequired,
     hidden: PropTypes.bool.isRequired,

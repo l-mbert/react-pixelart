@@ -19,9 +19,11 @@ class LayerControl extends React.Component {
   }
 
   addLayer = () => {
+    const id =
+      this.layers.length > 0 ? this.layers[this.layers.length - 1].id + 1 : 1;
     this.layers.push({
-      id: 2,
-      name: 'Layer 2',
+      id,
+      name: `Layer ${id}`,
       preview:
         'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
       matrix: [[]],
@@ -31,13 +33,41 @@ class LayerControl extends React.Component {
     this.updateAllLayers(this.layers);
   };
 
-  removeLayer = () => {};
+  removeLayer = (layer) => {
+    this.layers = this.layers.filter((l) => {
+      if (l.id === layer.id) return false;
+      return true;
+    });
+    this.updateAllLayers(this.layers);
+  };
 
-  hideLayer = () => {};
+  hideLayer = (layer) => {
+    this.layers = this.layers.map((l) => {
+      if (l.id === layer.id) {
+        return {
+          ...l,
+          hidden: !l.hidden,
+        };
+      }
+      return l;
+    });
+    this.updateAllLayers(this.layers);
+  };
 
   duplicateLayer = () => {};
 
-  lockLayer = () => {};
+  lockLayer = () => {
+    this.layers = this.layers.map((l) => {
+      if (l.id === layer.id) {
+        return {
+          ...l,
+          locked: !l.locked,
+        };
+      }
+      return l;
+    });
+    this.updateAllLayers(this.layers);
+  };
 
   renameLayer = () => {};
 
@@ -57,7 +87,12 @@ class LayerControl extends React.Component {
                       className='ReactPixelart-LayerControl-layersItem'
                       key={layer.id}
                     >
-                      <button className='ReactPixelart-LayerControl-layersItem-hide'>
+                      <button
+                        className='ReactPixelart-LayerControl-layersItem-hide'
+                        onClick={() => {
+                          this.hideLayer(layer);
+                        }}
+                      >
                         Hide
                       </button>
                       <div className='ReactPixelart-LayerControl-layersItem-preview'>
@@ -73,9 +108,17 @@ class LayerControl extends React.Component {
                         <div className='ReactPixelart-LayerControl-layersItem-rightName'>
                           {layer.name}
                         </div>
-                        <div className='ReactPixelart-LayerControl-layersItem-rightLock'>
+                        <button className='ReactPixelart-LayerControl-layersItem-rightLock'>
                           Lock
-                        </div>
+                        </button>
+                        <button
+                          className='ReactPixelart-LayerControl-layersItem-rightDelete'
+                          onClick={() => {
+                            this.removeLayer(layer);
+                          }}
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))}
